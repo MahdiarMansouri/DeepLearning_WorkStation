@@ -1,4 +1,8 @@
 import torchvision.models as models
+import torch
+from torch import nn, optim
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
 
 class PretrainedModelLoader:
     def __init__(self, model_name, pretrained=True):
@@ -40,6 +44,55 @@ class PretrainedModelLoader:
             raise ValueError(f"Model {self.model_name} is not supported or does not exist.")
 
 # Example usage
-if __name__ == "__main__":
-    model_loader = PretrainedModelLoader("ResNet")
-    print(model_loader.model)
+# if __name__ == "__main__":
+#     model_loader = PretrainedModelLoader("ResNet5")
+#     print(model_loader.model)
+
+class BaseModel:
+    def __init__(self, model_fn, **hyperparams):
+        self.model = model_fn(pretrained=hyperparams.get("pretrained", True))
+        self.hyperparams = hyperparams
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model.to(self.device)
+
+    def train(self, train_loader, val_loader=None):
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.Adam(self.model.parameters(), lr=self.hyperparams.get("lr", 0.001))
+
+        epochs = self.hyperparams.get("epochs", 10)
+        for epoch in range(epochs):
+            self.model.train()
+            running_loss = 0.0
+            for inputs, labels in train_loader:
+                inputs, labels = inputs.to(self.device), labels.to(self.device)
+                optimizer.zero_grad()
+
+                outputs = self.model(inputs)
+                loss = criterion(outputs, labels)
+                loss.backward()
+                optimizer.step()
+
+                running_loss += loss.item()
+            print(f"Epoch {epoch + 1}, Loss: {running_loss / len(train_loader)}")
+
+            if val_loader:
+                self.evaluate(val_loader)
+
+    def evaluate(self, data_loader):
+        self.model.eval()
+        correct = 0
+        total = 0
+        with torch.no_grad():
+            for inputs, labels in data_loader:
+                inputs, labels = inputs.to(self.device), labels.to(self.device)
+                outputs = self.model(inputs)
+                _, predicted = torch.max(outputs.data, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
+        print(f'Accuracy: {100 * correct / total}%')
+
+    def save_model(self, path):
+        torch.save(self.model.state_dict(), path)
+
+    def load_model(self, path):
+        self.model.load_state_dict(torch.load(path))
