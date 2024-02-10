@@ -1,8 +1,6 @@
+import json
 import torchvision.models as models
-import torch
-from torch import nn, optim
-from torchvision import datasets, transforms
-from torch.utils.data import DataLoader
+
 
 class PretrainedModelLoader:
     def __init__(self, model_name, pretrained=True):
@@ -42,6 +40,14 @@ class PretrainedModelLoader:
 
 
 class BaseModel:
-    def __init__(self, model_fn, **hyperparams):
-        self.model = model_fn(pretrained=hyperparams.get("pretrained", True))
-        self.hyperparams = hyperparams
+    def __init__(self, model_name, model_architecture, model_weights):
+        self.name = model_name
+        self.architecture = model_architecture
+        self.weights = model_weights
+
+    def __repr__(self):
+        return json.dumps(self.__dict__)
+
+class Result:
+    # todo: add Result entity for further process
+    pass
