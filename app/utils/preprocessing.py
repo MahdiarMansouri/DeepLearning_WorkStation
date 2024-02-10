@@ -53,6 +53,8 @@ class FeatureExtractionDataset(Dataset):
             image = self.apply_morphology(image)
         elif self.feature_method == 'gabor':
             image = self.apply_gabor(image)
+        elif self.feature_method == 'hog':
+            image = self.apply_hog(image)
         else:
             raise ValueError(f"Unsupported feature extraction method: {self.feature_method}")
 
