@@ -139,9 +139,6 @@ class ItemDA:
         self.disconnect()
         self.find_by_code(item.code)
 
-
-
-
 # TEST !!!
 
 # da = ItemDA()

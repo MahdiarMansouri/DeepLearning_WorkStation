@@ -1,7 +1,6 @@
+import pickle
 import mysql.connector
-from datetime import datetime
 from mysql.connector import Error
-
 from app.models.dl_models.dl_models import BaseModel
 
 
@@ -11,7 +10,8 @@ class ModelDA:
             host="localhost",
             user="root",
             password="root123",
-            database="dlws")
+            database="dlws",
+            ssl_disabled=True)
         self.cursor = self.db.cursor()
 
     def disconnect(self, commit=False):
@@ -30,10 +30,10 @@ class ModelDA:
         return self.db
 
     def save_model_to_db(self, model):
-        self.connect()
+        # self.connect()
         self.cursor.execute("insert into model_storage (model_name, architecture, weights) values (%s, %s, %s)",
                             [model.name, model.architecture, model.weights])
-        self.disconnect(commit=True)
+        # self.disconnect(commit=True)
 
     def add_model_result(self, result):
         pass
@@ -75,8 +75,29 @@ class ModelDA:
 
     def find_by_model_name(self, name):
         self.connect()
-        self.cursor.execute("select * from model_storage where model_name= %s", [name])
+        self.cursor.execute("select model_name, architecture, weights from model_storage where model_name= %s", [name])
         model = self.cursor.fetchall()
         self.disconnect()
+        if model:
+            model_name, architecture_blob, weights_blob = model
+            architecture = pickle.loads(architecture_blob)
+            model.load_state_dict(pickle.loads(weights_blob))
+            return BaseModel(model_name, architecture)
+        else:
+            raise ValueError(f"Model with name {model_name} not found in database.")
         model = BaseModel(model.model_name, model.architecture, model.weights)
         return model
+
+    def load_model_from_db(self, model_name):
+        self.connect()
+        self.cursor.execute("SELECT * FROM model_storage WHERE model_name = %s", (model_name,))
+        row = self.cursor.fetchone()
+        self.disconnect()
+
+        if row:
+            architecture_blob, weights_blob = row
+            model = pickle.loads(architecture_blob)
+            model.load_state_dict(pickle.loads(weights_blob))
+            return model
+        else:
+            raise ValueError(f"Model with name {model_name} not found in database.")

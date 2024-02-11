@@ -48,7 +48,7 @@ create_model_storage_table = """
 CREATE TABLE model_storage (
     id INT AUTO_INCREMENT PRIMARY KEY,
     model_name VARCHAR(255),
-    architecture TEXT,
+    architecture LONGBLOB,
     weights LONGBLOB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
