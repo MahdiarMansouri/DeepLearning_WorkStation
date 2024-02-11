@@ -14,9 +14,6 @@ def initialize_models_in_db():
         print("Failed to connect to the database. Exiting.")
         return
 
-    # Connect to database for saving models
-    # model_da.connect()
-
     # For loop for loading pretrained and random weights in each models
     for pretrained_flag in [True, False]:
 
@@ -57,7 +54,5 @@ def initialize_models_in_db():
             except Exception as e:
                 print(f"An error occurred while processing {model_name}: {str(e)}")
 
-    # model_da.disconnect(commit=True)
-
-
-initialize_models_in_db()
+if __name__ == '__main__':
+    initialize_models_in_db()
