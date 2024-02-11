@@ -5,7 +5,7 @@ from app.models.dl_models.dl_models import PretrainedModelLoader, BaseModel
 
 
 def initialize_models_in_db():
-    # Instantiate the data access and model loader classes
+    # Create the data access and model loader objects
     model_da = ModelDA()
     model_loader = PretrainedModelLoader()
 
@@ -14,37 +14,50 @@ def initialize_models_in_db():
         print("Failed to connect to the database. Exiting.")
         return
 
-    model_da.connect()
-    # Iterate over all the models and save them to the database
-    for model_name in model_loader.model_names.keys():
-        time.sleep(1)
-        print(f"Processing {model_name} model...")
+    # Connect to database for saving models
+    # model_da.connect()
 
-        try:
-            # Load the pretrained model
-            model = model_loader.get_pretrained_model(model_name, pretrained=True)
+    # For loop for loading pretrained and random weights in each models
+    for pretrained_flag in [True, False]:
 
-            # Serialize the model weights to binary
-            weights_binary = pickle.dumps(model.state_dict())
+        # Iterate over all the models and save them to the database
+        for model_name in model_loader.model_names.keys():
+            print('__' * 50)
+            time.sleep(3)
+            print(f"Checking for the presence of {model_name} model in the database...")
 
-            # Remove the weights from the model
-            model_weights = model.state_dict()
-            for param in model_weights:
-                model_weights[param] = None
+            # Check if the model already exists in the database
+            check_model = model_da.find_by_model_name(model_name)
+            if check_model:
+                if check_model.pretrained == pretrained_flag:
+                    print(f"Model {model_name} already exists in the database. Skipping download and save.")
+                    continue
 
-            # Serialize the model structure to binary
-            model_structure_binary = pickle.dumps(model)
+            print(f"Model {model_name} does not exist in the database. Processing...")
 
-            # Create a BaseModel instance
-            base_model = BaseModel(model_name, model_structure_binary, weights_binary)
+            try:
+                # Load the pretrained model
+                model = model_loader.get_pretrained_model(model_name, pretrained=pretrained_flag)
 
-            # Save the model structure and weights to the database
-            model_da.save_model_to_db(base_model)
+                # Serialize the entire model to binary
+                model_structure_binary = pickle.dumps(model)
 
-            print(f"The model structure and weights for {model_name} have been saved to database.")
+                # Set pretrained flag as TINYINT of 1 & 0 for saving in database
+                if pretrained_flag == True:
+                    pretrained_flag = 1
+                else:
+                    pretrained_flag = 0
 
-        except Exception as e:
-            print(f"An error occurred while processing {model_name}: {str(e)}")
+                # Save the model name, structure, and pretrained flag to the database
+                model_loaded = BaseModel(model_name, model_structure_binary, pretrained_flag)
+                model_da.save_model_to_db(model_loaded)
 
-    model_da.disconnect(commit=True)
+                print(f"The entire structure for {model_name} has been saved to the database.")
+
+            except Exception as e:
+                print(f"An error occurred while processing {model_name}: {str(e)}")
+
+    # model_da.disconnect(commit=True)
+
+
 initialize_models_in_db()

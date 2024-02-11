@@ -1,7 +1,4 @@
 import json
-import time
-
-import torchvision
 import torchvision.models as models
 
 
@@ -40,10 +37,10 @@ class PretrainedModelLoader:
 
 
 class BaseModel:
-    def __init__(self, model_name, model_architecture, model_weights):
+    def __init__(self, model_name, model_structure, pretrained):
         self.name = model_name
-        self.architecture = model_architecture
-        self.weights = model_weights
+        self.structure = model_structure
+        self.pretrained = pretrained
 
     def __repr__(self):
         return json.dumps(self.__dict__)

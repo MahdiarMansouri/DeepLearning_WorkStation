@@ -47,10 +47,10 @@ database_name = "dlws"
 create_model_storage_table = """
 CREATE TABLE model_storage (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    model_name VARCHAR(255),
-    architecture LONGBLOB,
-    weights LONGBLOB,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    model_name VARCHAR(255) NOT NULL,
+    model_structure LONGBLOB NOT NULL,
+    pretrained TINYINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
 """
 
