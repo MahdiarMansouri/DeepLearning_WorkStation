@@ -44,15 +44,23 @@ user_password = "root123"
 database_name = "dlws"
 
 # SQL command to create tables
+# create_model_storage_table = """
+# CREATE TABLE model_storage (
+#     id INT AUTO_INCREMENT PRIMARY KEY,
+#     model_name VARCHAR(255) NOT NULL,
+#     model_structure LONGBLOB NOT NULL,
+#     pretrained TINYINT NOT NULL,
+#     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+# );
+# """
 create_model_storage_table = """
 CREATE TABLE model_storage (
     id INT AUTO_INCREMENT PRIMARY KEY,
     model_name VARCHAR(255) NOT NULL,
-    model_structure LONGBLOB NOT NULL,
+    model_path VARCHAR(255) NOT NULL, 
     pretrained TINYINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
-);
-"""
+);"""
 
 # todo: add model results table structure to create at the beginning
 create_model_results_table = """

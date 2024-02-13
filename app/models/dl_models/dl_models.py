@@ -1,5 +1,6 @@
 import json
 import torchvision.models as models
+import torch
 
 
 class PretrainedModelLoader:
@@ -37,10 +38,13 @@ class PretrainedModelLoader:
 
 
 class BaseModel:
-    def __init__(self, model_name, model_structure, pretrained):
+    def __init__(self, model_name, model_path, pretrained):
         self.name = model_name
-        self.structure = model_structure
+        self.path = model_path
         self.pretrained = pretrained
+
+    def get_model(self):
+        return torch.load(self.path)
 
     def __repr__(self):
         return json.dumps(self.__dict__)

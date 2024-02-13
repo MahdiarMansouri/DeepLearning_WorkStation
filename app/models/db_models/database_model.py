@@ -31,8 +31,8 @@ class ModelDA:
 
     def save_model_to_db(self, model):
         self.connect()
-        self.cursor.execute("insert into model_storage (model_name, model_structure, pretrained) values (%s, %s, %s)",
-                            [model.name, model.structure, model.pretrained])
+        self.cursor.execute("insert into model_storage (model_name, model_path, pretrained) values (%s, %s, %s)",
+                            [model.name, model.path, model.pretrained])
         self.disconnect(commit=True)
 
     def add_model_result(self, result):
@@ -75,18 +75,15 @@ class ModelDA:
 
     def find_by_model_name(self, name):
         self.connect()
-        self.cursor.execute("select model_name, model_structure, pretrained from model_storage where model_name= %s", [name])
+        self.cursor.execute("select model_name, model_path, pretrained from model_storage where model_name= %s", [name])
         model = self.cursor.fetchone()
         self.disconnect()
         if model is not None:
-            model_name, model_structure, pretrained_flag = model
+            model_name, model_path, pretrained_flag = model
             # Return pretrained_flag value from 0 & 1 to boolean for actual pretrained value
-            if pretrained_flag == 1:
-                pretrained = True
-            else:
-                pretrained = False
-            architecture = pickle.loads(model_structure)
-            return BaseModel(model_name, architecture, pretrained)
+            pretrained = bool(pretrained_flag)
+
+            return BaseModel(model_name, model_path, pretrained)
         else:
             return None
 
