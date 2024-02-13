@@ -6,6 +6,7 @@ import numpy as np
 from skimage.filters import sobel, gabor
 from skimage import morphology
 
+# todo: Add PCA for preprocessing
 
 class FeatureExtractionDataset(Dataset):
     def __init__(self, dataset, feature_method='sobel'):

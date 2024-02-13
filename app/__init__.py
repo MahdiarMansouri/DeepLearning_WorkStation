@@ -14,7 +14,7 @@ def initialize_models_in_db():
         print("Failed to connect to the database. Exiting.")
         return
 
-    # For loop for loading pretrained and random weights in each models
+    # Loop for loading pretrained and random weights in each models
     for pretrained_flag in [True, False]:
 
         # Iterate over all the models and save them to the database
