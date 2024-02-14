@@ -9,18 +9,21 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.frames = {}
+        self.init_frames()
 
-        # Initialize all frames and store them
+    def init_frames(self):
         for F in (Dashboard, MakePipeline, MakeModel, ShowResults):
-            frame = F(self)
-            self.frames[F] = frame
-            # The frames are stacked on top of each other
+            page_name = F.__name__
+            frame = F(parent=self, controller=self)
+            self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
+        self.show_frame("Dashboard")
 
-        self.show_frame(Dashboard)
-
-    def show_frame(self, context):
-        frame = self.frames[context]
+    def show_frame(self, page_name):
+        frame = self.frames[page_name]
         frame.tkraise()
-        # Resize the window to fit the frame
         self.geometry(f"{frame.width}x{frame.height}")
+
+if __name__ == "__main__":
+    app = App()
+    app.mainloop()
