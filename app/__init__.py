@@ -7,7 +7,7 @@ from app.models.dl_models.dl_models import PretrainedModelLoader, BaseModel
 
 def initialize_models_in_db():
     # Define the directory where models will be saved
-    models_directory = "model_files"
+    models_directory = "ai_model_files"
     os.makedirs(models_directory, exist_ok=True)
 
     # Create the data access and model loader objects
