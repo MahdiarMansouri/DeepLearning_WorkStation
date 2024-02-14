@@ -51,9 +51,18 @@ class BaseModel:
 
 class Result:
     # todo: add Result entity for further process and saving to database
-    # def __init__(self, model_name, epoch_nums, batch_size, Input_size, validation_split, pretrained_or_not, output_classes,
-    #              feature_extraction_method, optimizer, learning_rate, regularizer, best_model_acc, result_lists):
-    pass
+    def __init__(self, model_name, epoch_nums, batch_size, input_size, pretrained, output_classes,
+                 feature_extraction_method, optimizer, learning_rate, regularizer, best_model_acc, result_lists):
+        self.model_name = model_name
+        self.epoch_nums = epoch_nums
+        self.batch_size = batch_size
+        self.input_size = input_size
+        self.pretrained = pretrained
+        self.output_classes = output_classes
+        self.feature_extraction_method = feature_extraction_method
+        self.optimizer = optimizer
+        self.learning_rate = learning_rate
+
 
 # test
 # model_loader = PretrainedModelLoader()
