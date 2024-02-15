@@ -1,4 +1,5 @@
 from app.models.db_models.database_model import ModelDA
+from app.models.dl_models.dl_models import BaseModel
 from app.services.training_service import Trainer
 from app.utils.dataset import DataPreparation
 from app.utils.preprocessing import FeatureExtractionDataset
@@ -35,10 +36,10 @@ class PipelineRunner:
             data_preparation = DataPreparation(data_path=self.data_path, batch_size=self.batch_size)
             self.dataloaders, self.output_classes = data_preparation.prepare_data()
 
-
     def define_model(self):
         model_da = ModelDA()
-        model = model_da.find_by_model_name(self.model_name)
+        model = model_da.find_by_model_name_pretrained(self.model_name, 1 if self.pretrained else 0)
+        model = BaseModel(*model)
         self.model = model.get_model(self.output_classes)
 
     def train_model(self):
@@ -52,25 +53,5 @@ class PipelineRunner:
         self.data_preparation()
         self.define_model()
         self.train_model()
+        return self.model, self.loss_lists, self.acc_lists
 
-# Example of defining different pipelines
-# pipeline1 = PipelineRunner(
-#     FeatureExtractionDataset(dataset, method=None)
-#     DataLoader(dataset="Dataset1"),
-#     Model(architecture="Architecture1"),
-#     Trainer(model="Model1", data_loader="DataLoader1"),
-#     Evaluator(model="Model1", data_loader="DataLoader1")
-# )
-#
-# pipeline2 = PipelineRunner(
-#     DataLoader(dataset="Dataset2"),
-#     Model(architecture="Architecture2"),
-#     Trainer(model="Model2", data_loader="DataLoader2"),
-#     Evaluator(model="Model2", data_loader="DataLoader2")
-# )
-#
-# pipelines = [pipeline1, pipeline2]
-
-
-# for pipeline in pipelines:
-#     pipeline.run()

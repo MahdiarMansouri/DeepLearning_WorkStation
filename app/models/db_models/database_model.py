@@ -53,6 +53,13 @@ class ModelDA:
         self.cursor.execute("delete from model_storage where id= %s", [id])
         self.disconnect(commit=True)
 
+    def get_model_names(self):
+        self.connect()
+        self.cursor.execute("select model_name from model_storage where pretrained= %s", [0])
+        model_names = self.cursor.fetchall()
+        self.disconnect()
+        return model_names
+
     def find_all(self):
         self.connect()
         self.cursor.execute("select * from model_storage")

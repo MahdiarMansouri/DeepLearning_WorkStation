@@ -1,7 +1,6 @@
 import torch
 from easydict import EasyDict
 from torch import nn, optim
-from evaluating_service import Evaluator
 
 class Trainer:
     def __init__(self, model, train_loader, val_loader=None, epochs=10, learning_rate=0.001, optimizer='adam',

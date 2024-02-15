@@ -4,7 +4,7 @@ import tkinter as tk
 class Dashboard(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        self.width, self.height = 300, 200
+        self.width, self.height = 2500, 200
 
         tk.Label(self, text="Main Menu").pack(pady=10, padx=10)
         tk.Button(self, text="Go to Make Model", command=lambda: controller.show_frame("MakeModel")).pack()

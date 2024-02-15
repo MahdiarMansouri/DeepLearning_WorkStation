@@ -62,5 +62,4 @@ def initialize_models_in_db():
                 print(f"An error occurred while processing {model_name}: {str(e)}")
 
 
-# if __name__ == '__main__':
 initialize_models_in_db()
