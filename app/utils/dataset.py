@@ -1,7 +1,7 @@
 import os
 from torchvision import datasets
 from torchvision.transforms import Compose, Resize, ToTensor, Normalize
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 
 
 class DataPreparation:
@@ -25,6 +25,9 @@ class DataPreparation:
             Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ])
 
+    def get_classes(self):
+        return len(self.train_dataset.classes)
+
     def prepare_data(self):
         if self.feature_preparation:
             return (self.train_dataset, self.val_dataset)
@@ -32,8 +35,19 @@ class DataPreparation:
         else:
             train_loader = DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True)
             val_loader = DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False)
+            return (train_loader, val_loader)
 
-            output_classes = len(self.train_dataset.classes)
 
-            return (train_loader, val_loader), output_classes
+class TensorDataset(Dataset):
+    def __init__(self, image_tensors, label_tensors):
+        self.image_tensors = image_tensors
+        self.label_tensors = label_tensors
+
+    def __len__(self):
+        return self.image_tensors.size(0)
+
+    def __getitem__(self, idx):
+        image = self.image_tensors[idx]
+        label = self.label_tensors[idx]
+        return image, label
 

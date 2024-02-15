@@ -36,17 +36,16 @@ class ModelDA:
         self.disconnect(commit=True)
 
     def add_model_result(self, result):
-        pass
-
-    #     self.connect()
-    #     self.cursor.execute("insert into item_table (rec_time) values (%s)", [person.rec_time])
-    #     self.cursor.execute("select code from item_table order by code desc limit 1")
-    #     code = self.cursor.fetchone()
-    #     self.cursor.execute(
-    #         "insert into person_item (code, rec_time, first_name, last_name, national_code, phone) "
-    #         "values (%s, %s, %s, %s, %s, %s)",
-    #         [code[0], person.rec_time, person.first_name, person.last_name, person.national_code, person.phone])
-    #     self.disconnect(commit=True)
+        self.connect()
+        self.cursor.execute("insert into model_training_results (model_name, epoch_nums, batch_size, pretrained,"
+                            " output_classes, feature_method, optimizer, loss_func, learning_rate, train_acc_list,"
+                            " val_acc_list, train_loss_list, val_loss_list)"
+                            " values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                            [result.model_name, result.epoch_nums, result.batch_size, result.pretrained,
+                             result.output_classes, result.feature_method, result.optimizer, result.loss_function,
+                             result.learning_rate, str(result.train_acc_list), str(result.val_acc_list), str(result.train_loss_list),
+                             str(result.val_loss_list)])
+        self.disconnect(commit=True)
 
     def remove_model(self, code):
         self.connect()
@@ -82,18 +81,20 @@ class ModelDA:
 
     def find_by_model_name(self, model_name):
         self.connect()
-        self.cursor.execute("select model_name, model_path, pretrained from model_storage where model_name= %s", [model_name])
+        self.cursor.execute("select model_name, model_path, pretrained from model_storage where model_name= %s",
+                            [model_name])
         models = self.cursor.fetchall()
         self.disconnect()
         return models
 
     def find_by_model_name_pretrained(self, model_name, pretrained):
         self.connect()
-        self.cursor.execute("select model_name, model_path, pretrained from model_storage where model_name= %s and pretrained=%s", [model_name, pretrained])
+        self.cursor.execute(
+            "select model_name, model_path, pretrained from model_storage where model_name= %s and pretrained=%s",
+            [model_name, pretrained])
         model = self.cursor.fetchone()
         self.disconnect()
         return model
-
 
 # model_da = ModelDA()
 # model = model_da.find_by_model_name('alexnet')

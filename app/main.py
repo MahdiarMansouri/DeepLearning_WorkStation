@@ -1,4 +1,6 @@
 import tkinter as tk
+
+from app.view.training_model_panel import TrainingModel
 from view.dashboard_panel import Dashboard
 from view.make_model_panel import MakeModel
 from view.make_pipeline_panel import MakePipeline
@@ -9,10 +11,13 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.frames = {}
+        self.pipelines = []
+        self.pipelines_values = []
+        self.title("DeepLearning WorkStation")
         self.init_frames()
 
     def init_frames(self):
-        for F in (Dashboard, MakePipeline, MakeModel, ShowResults):
+        for F in (Dashboard, MakePipeline, MakeModel, ShowResults, TrainingModel):
             page_name = F.__name__
             frame = F(parent=self, controller=self)
             self.frames[page_name] = frame
@@ -23,6 +28,9 @@ class App(tk.Tk):
         frame = self.frames[page_name]
         frame.tkraise()
         self.geometry(f"{frame.width}x{frame.height}")
+        if page_name == "TrainingModel":
+            frame.update_pipelines(self.pipelines_values, self.pipelines)
+
 
 if __name__ == "__main__":
     app = App()

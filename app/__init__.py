@@ -43,7 +43,7 @@ def initialize_models_in_db():
 
                 # Set the file name and path where the model will be saved
                 model_filename = f"{model_name}_{'pretrained' if pretrained_flag else 'random'}.pth"
-                model_filepath = os.path.join(models_directory, model_filename)
+                model_filepath = (models_directory + '/' + model_filename)
 
                 # Save the model to the specified directory
                 torch.save(model, model_filepath)

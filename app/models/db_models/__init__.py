@@ -64,11 +64,14 @@ CREATE TABLE model_training_results (
     batch_size INT,
     pretrained TINYINT,
     output_classes INT,
-    feature_extraction_method VARCHAR(255),
+    feature_method VARCHAR(255),
     optimizer VARCHAR(100),
     loss_func VARCHAR(100),
     learning_rate FLOAT,
-    results_lists TEXT,
+    train_acc_list TEXT,
+    val_acc_list TEXT,
+    train_loss_list TEXT,
+    val_loss_list TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
 """

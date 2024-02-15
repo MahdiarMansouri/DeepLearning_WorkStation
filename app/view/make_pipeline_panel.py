@@ -28,7 +28,8 @@ class MakePipeline(tk.Frame):
 
         tk.Label(self, text="Feature Extraction Method").grid(row=3, column=0, sticky='e')
         self.feature_method_entry = tk.StringVar()
-        ttk.Combobox(self, values=feature_methods, textvariable=self.feature_method_entry).grid(row=3, column=1, sticky='we')
+        ttk.Combobox(self, values=feature_methods, textvariable=self.feature_method_entry).grid(row=3, column=1,
+                                                                                                sticky='we')
 
         tk.Label(self, text="Model Name").grid(row=4, column=0, sticky='e')
         self.model_name_entry = tk.StringVar()
@@ -48,16 +49,18 @@ class MakePipeline(tk.Frame):
 
         tk.Label(self, text="Loss Function").grid(row=8, column=0, sticky='e')
         self.loss_func_entry = tk.StringVar()
-        ttk.Combobox(self, values=['CrossEntropy'], textvariable=self.loss_func_entry).grid(row=8, column=1, sticky='we')
+        ttk.Combobox(self, values=['CrossEntropy'], textvariable=self.loss_func_entry).grid(row=8, column=1,
+                                                                                            sticky='we')
 
         tk.Label(self, text="Learning Rate").grid(row=9, column=0, sticky='e')
         self.lr_entry = tk.StringVar()
-        ttk.Combobox(self, textvariable=self.lr_entry, values=['0.001', '0.003', '0.01', '0.03']).grid(row=9, column=1, sticky='we')
+        ttk.Combobox(self, textvariable=self.lr_entry, values=['0.001', '0.003', '0.01', '0.03']).grid(row=9, column=1,
+                                                                                                       sticky='we')
 
         # Right side - Pipeline table
         self.pipeline_treeview = ttk.Treeview(self, columns=(
-        'Data Path', 'Batch Size', 'Feature Method', 'Model Name', 'Pretrained', 'Epoch Numbers', 'Optimizer',
-        'Loss Function', 'Learning Rate'), show='headings')
+            'Data Path', 'Batch Size', 'Feature Method', 'Model Name', 'Pretrained', 'Epoch Numbers', 'Optimizer',
+            'Loss Function', 'Learning Rate'), show='headings')
         self.pipeline_treeview.heading('Data Path', text='Data Path')
         self.pipeline_treeview.heading('Batch Size', text='Batch Size')
         self.pipeline_treeview.heading('Feature Method', text='Feature Method')
@@ -96,17 +99,31 @@ class MakePipeline(tk.Frame):
         loss_func = self.loss_func_entry.get()
         lr = self.lr_entry.get()
 
-        self.pipeline_treeview.insert('', tk.END, values=(
-            data_path, batch_size, feature_method, model_name, pretrained, epoch_nums, optimizer, loss_func, lr))
+        values = [data_path, batch_size, feature_method, model_name, pretrained, epoch_nums, optimizer, loss_func, lr]
+        self.pipeline_treeview.insert('', tk.END, values=values)
 
+        match lr:
+            case '0.001':
+                lr = 1e-3
+            case '0.01':
+                lr = 1e-2
+            case '0.003':
+                lr = 3e-3
+            case '0.03':
+                lr = 3e-2
 
-        self.pipelines.append(PipelineRunner(data_path, int(batch_size), feature_method, model_name, int(pretrained),
-                                             int(epoch_nums), optimizer, float(lr), loss_func))
+        if feature_method == 'None':
+            feature_method = None
+
+        self.controller.pipelines_values.append(values)
+        self.controller.pipelines.append(
+            PipelineRunner(data_path, int(batch_size), feature_method, model_name, int(pretrained),
+                           int(epoch_nums), optimizer, float(lr), loss_func)
+        )
+
+        print(len(self.controller.pipelines))
 
     def run_pipelines(self):
-        # Logic to run the pipelines
-        # For this example, we'll just print the names
-        print(len(self.pipelines))
-        # pipelines = list(self.pipeline_listbox.get(0, tk.END))
-        # print("Running pipelines:", pipelines)
-        # TODO: Add real pipeline running logic here
+        print(len(self.controller.pipelines))
+        print(len(self.controller.pipelines_values))
+        self.controller.show_frame("TrainingModel")

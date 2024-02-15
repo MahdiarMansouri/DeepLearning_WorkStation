@@ -1,7 +1,7 @@
 from app.models.db_models.database_model import ModelDA
-from app.models.dl_models.dl_models import BaseModel
+from app.models.dl_models.dl_models import BaseModel, Result
 from app.services.training_service import Trainer
-from app.utils.dataset import DataPreparation
+from app.utils.dataset import DataPreparation, TensorDataset
 from app.utils.preprocessing import FeatureExtractionDataset
 import torch
 
@@ -22,19 +22,25 @@ class PipelineRunner:
     def data_preparation(self):
         if self.feature_method is not None:
             data_preparation = DataPreparation(data_path=self.data_path, feature_preparation=True)
+            self.output_classes = data_preparation.get_classes()
             datasets = data_preparation.prepare_data()
-            feature_datasets = []
+            feature_images = []
+            feature_labels = []
             for dataset in datasets:
                 preprocessor = FeatureExtractionDataset(dataset, self.feature_method)
-                feature_dataset = preprocessor.extract_features()
-                feature_datasets.append(feature_dataset)
+                images, labels = preprocessor.extract_features()
+                feature_labels.append(labels)
+                feature_images.append(images)
+            train_feature_dataset = TensorDataset(feature_images[0], feature_labels[0])
+            val_feature_dataset = TensorDataset(feature_images[1], feature_labels[1])
             feature_data_preparation = DataPreparation(batch_size=self.batch_size,
-                                                       train_feature_dataset=feature_datasets[0],
-                                                       val_feature_dataset=feature_datasets[1])
-            self.dataloaders, self.output_classes = feature_data_preparation.prepare_data()
+                                                       train_feature_dataset=train_feature_dataset,
+                                                       val_feature_dataset=val_feature_dataset)
+            self.dataloaders = feature_data_preparation.prepare_data()
         else:
             data_preparation = DataPreparation(data_path=self.data_path, batch_size=self.batch_size)
-            self.dataloaders, self.output_classes = data_preparation.prepare_data()
+            self.dataloaders = data_preparation.prepare_data()
+            self.output_classes = data_preparation.get_classes()
 
     def define_model(self):
         model_da = ModelDA()
@@ -53,5 +59,9 @@ class PipelineRunner:
         self.data_preparation()
         self.define_model()
         self.train_model()
-        return self.model, self.loss_lists, self.acc_lists
 
+    def get_results(self):
+        result = Result(self.model_name, self.epoch_nums, self.batch_size, self.pretrained, self.output_classes,
+                        self.feature_method, self.optimizer, self.loss_func, self.learning_rate, self.acc_lists.train,
+                        self.acc_lists.val, self.loss_lists.train, self.loss_lists.val)
+        return result

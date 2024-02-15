@@ -30,7 +30,6 @@ class PretrainedModelLoader:
             'wideresnet': models.wide_resnet50_2,
         }
 
-
     def get_pretrained_model(self, model_name, pretrained=True):
         if model_name in self.model_names:
             return self.model_names[model_name](pretrained=pretrained)
@@ -70,20 +69,23 @@ class BaseModel:
     def __repr__(self):
         return json.dumps(self.__dict__)
 
+
 class Result:
-    def __init__(self, model_name, epoch_nums, batch_size, input_size, pretrained, output_classes,
-                 feature_extraction_method, optimizer, loss_function,  learning_rate, result_lists):
+    def __init__(self, model_name, epoch_nums, batch_size, pretrained, output_classes, feature_method, optimizer,
+                 loss_function, learning_rate, train_acc_list, val_acc_list, train_loss_list, val_loss_list):
         self.model_name = model_name
         self.epoch_nums = epoch_nums
         self.batch_size = batch_size
-        self.input_size = input_size
         self.pretrained = pretrained
         self.output_classes = output_classes
-        self.feature_extraction_method = feature_extraction_method
+        self.feature_method = feature_method
         self.optimizer = optimizer
         self.loss_function = loss_function
         self.learning_rate = learning_rate
-        self.result_lists = result_lists
+        self.train_acc_list = train_acc_list
+        self.val_acc_list = val_acc_list
+        self.train_loss_list = train_loss_list
+        self.val_loss_list = val_loss_list
 
     def __repr__(self):
         return json.dumps(self.__dict__)

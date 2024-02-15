@@ -4,7 +4,7 @@ from torch import nn, optim
 
 class Trainer:
     def __init__(self, model, train_loader, val_loader=None, epochs=10, learning_rate=0.001, optimizer='adam',
-                criterion=nn.CrossEntropyLoss(), device='cpu'):
+                criterion='CrossEntropy', device='cpu'):
         self.model = model
         self.train_loader = train_loader
         self.val_loader = val_loader
@@ -16,8 +16,13 @@ class Trainer:
 
     def train_model(self):
         self.model.to(self.device)
+
+        if self.criterion == 'CrossEntropy':
+            self.criterion = nn.CrossEntropyLoss()
+
         if self.optimizer == 'adam':
             optimizer = optim.Adam(self.model.parameters(), lr=self.learning_rate)
+
         acc_lists = EasyDict({'train': [], 'val': []})
         loss_lists = EasyDict({'train': [], 'val': []})
 
@@ -65,7 +70,7 @@ class Trainer:
         total = 0
 
         with torch.no_grad():
-            for inputs, labels in self.data_loader:
+            for inputs, labels in self.val_loader:
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
                 outputs = self.model(inputs)
                 loss = self.criterion(outputs, labels)
@@ -74,7 +79,7 @@ class Trainer:
                 total += labels.size(0)
                 correct_predictions += (predicted == labels).sum().item()
 
-        val_loss = total_loss / len(self.data_loader)
+        val_loss = total_loss / len(self.val_loader)
         val_accuracy = correct_predictions / total
         return val_loss, val_accuracy
 

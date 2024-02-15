@@ -73,5 +73,5 @@ class FeatureExtractionDataset(Dataset):
             labels.append(label)
 
         # Return a new dataset of features
-        return Dataset(torch.stack(feature_images), torch.tensor(labels))
+        return torch.stack(feature_images), torch.tensor(labels)
 
