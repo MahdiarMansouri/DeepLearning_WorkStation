@@ -50,9 +50,8 @@ class BaseModel:
         return json.dumps(self.__dict__)
 
 class Result:
-    # todo: add Result entity for further process and saving to database
     def __init__(self, model_name, epoch_nums, batch_size, input_size, pretrained, output_classes,
-                 feature_extraction_method, optimizer, learning_rate, regularizer, best_model_acc, result_lists):
+                 feature_extraction_method, optimizer, loss_function,  learning_rate,  result_lists):
         self.model_name = model_name
         self.epoch_nums = epoch_nums
         self.batch_size = batch_size
@@ -61,27 +60,6 @@ class Result:
         self.output_classes = output_classes
         self.feature_extraction_method = feature_extraction_method
         self.optimizer = optimizer
+        self.loss_function = loss_function
         self.learning_rate = learning_rate
-
-
-# test
-# model_loader = PretrainedModelLoader()
-# for name in model_loader.model_names.keys():
-#     model = model_loader.get_pretrained_model(name)
-#     print(name)
-#     print(model.state_dict())
-#     print('0' * 300)
-#
-#     for param in model.state_dict():
-#         model.state_dict()[param] = model.set_extra_state(0)
-#         print(model.state_dict()[param])
-#         time.sleep(10)
-#
-#     print(len(model.state_dict()))
-#     print('1' * 300)
-#     time.sleep(1)
-
-#
-#
-# tensor([[[[ 1.1864e-01,  9.4069e-02,  9.5435e-02,  ...,  5.5822e-02,            2.1575e-02,  4.9963e-02],
-# tensor([[[[ 1.1864e-01,  9.4069e-02,  9.5435e-02,  ...,  5.5822e-02,            2.1575e-02,  4.9963e-02],
+        self.result_lists = result_lists

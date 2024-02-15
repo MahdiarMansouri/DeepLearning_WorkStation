@@ -1,6 +1,7 @@
 class PipelineRunner:
-    def __init__(self, data_loader, model, trainer, evaluator):
-        self.data_loader = data_loader
+    def __init__(self, data_preparation, feature_extraction_method, model, trainer, evaluator):
+        self.data_preparation = data_preparation
+        self.feature_extraction_method = feature_extraction_method
         self.model = model
         self.trainer = trainer
         self.evaluator = evaluator

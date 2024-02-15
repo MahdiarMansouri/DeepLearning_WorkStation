@@ -26,4 +26,4 @@ class DataPreparation:
         val_dataset = datasets.ImageFolder(root=self.val_dir, transform=self.transforms)
         val_loader = DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False)
 
-        return train_loader, val_loader
+        return (train_loader, val_loader)

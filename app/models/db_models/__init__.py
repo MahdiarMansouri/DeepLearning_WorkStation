@@ -60,11 +60,24 @@ CREATE TABLE model_storage (
     model_path VARCHAR(255) NOT NULL, 
     pretrained TINYINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
-);"""
+);
+"""
 
-# todo: add model results table structure to create at the beginning
 create_model_results_table = """
-
+CREATE TABLE model_training_results (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    model_name VARCHAR(255),
+    epoch_nums INT,
+    batch_size INT,
+    pretrained TINYINT,
+    output_classes INT,
+    feature_extraction_method VARCHAR(255),
+    optimizer VARCHAR(100),
+    loss_func VARCHAR(100),
+    learning_rate FLOAT,
+    results_lists TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+);
 """
 
 # Connect to the Database
