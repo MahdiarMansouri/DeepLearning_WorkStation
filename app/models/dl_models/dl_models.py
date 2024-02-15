@@ -1,6 +1,7 @@
 import json
 import torchvision.models as models
 import torch
+import torch.nn as nn
 
 
 class PretrainedModelLoader:
@@ -43,15 +44,35 @@ class BaseModel:
         self.path = model_path
         self.pretrained = pretrained
 
-    def get_model(self):
-        return torch.load(self.path)
+    def get_model(self, output_classes):
+        model = torch.load(self.path)
+        self._modify_output_layer(model, output_classes)
+        return model
+
+    def _modify_output_layer(self, model, output_classes):
+        if hasattr(model, 'fc'):
+            num_features = model.fc.in_features
+            model.fc = nn.Linear(num_features, output_classes)
+        elif hasattr(model, 'classifier'):
+            if isinstance(model.classifier, nn.Linear):
+                num_features = model.classifier.in_features
+                model.classifier = nn.Linear(num_features, output_classes)
+            elif isinstance(model.classifier, nn.Sequential):
+                num_features = model.classifier[-1].in_features
+                model.classifier[-1] = nn.Linear(num_features, output_classes)
+        elif hasattr(model, 'head'):
+            num_features = model.head.in_features
+            model.head = nn.Linear(num_features, output_classes)
+        else:
+            print(
+                f"Warning: Output layer modification for model {self.name} is not implemented. The model architecture might need a specific adjustment.")
 
     def __repr__(self):
         return json.dumps(self.__dict__)
 
 class Result:
     def __init__(self, model_name, epoch_nums, batch_size, input_size, pretrained, output_classes,
-                 feature_extraction_method, optimizer, loss_function,  learning_rate,  result_lists):
+                 feature_extraction_method, optimizer, loss_function,  learning_rate, result_lists):
         self.model_name = model_name
         self.epoch_nums = epoch_nums
         self.batch_size = batch_size
@@ -63,3 +84,6 @@ class Result:
         self.loss_function = loss_function
         self.learning_rate = learning_rate
         self.result_lists = result_lists
+
+    def __repr__(self):
+        return json.dumps(self.__dict__)

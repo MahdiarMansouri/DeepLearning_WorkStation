@@ -1,3 +1,5 @@
+import time
+
 import mysql.connector
 from mysql.connector import Error
 
@@ -44,15 +46,6 @@ user_password = "root123"
 database_name = "dlws"
 
 # SQL command to create tables
-# create_model_storage_table = """
-# CREATE TABLE model_storage (
-#     id INT AUTO_INCREMENT PRIMARY KEY,
-#     model_name VARCHAR(255) NOT NULL,
-#     model_structure LONGBLOB NOT NULL,
-#     pretrained TINYINT NOT NULL,
-#     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-# );
-# """
 create_model_storage_table = """
 CREATE TABLE model_storage (
     id INT AUTO_INCREMENT PRIMARY KEY,

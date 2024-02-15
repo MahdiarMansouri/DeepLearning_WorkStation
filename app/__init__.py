@@ -24,17 +24,19 @@ def initialize_models_in_db():
         # Iterate over all the models and save them to the directory
         for model_name in model_loader.model_names.keys():
             print('__' * 50)
-            # time.sleep(3)
+            pretrained_name = 'pretrained weights' if pretrained_flag else 'random weights'
             print(f"Checking for the presence of {model_name} model in the database...")
 
             # Check if the model file path already exists in the database
-            check_model = model_da.find_by_model_name(model_name)
-            if check_model and check_model.pretrained == (1 if pretrained_flag else 0):
-                print(f"Model {model_name} already exists in the database. Skipping download and save.")
-                continue
+            check_model = model_da.find_by_model_name_pretrained(model_name, 1 if pretrained_flag else 0)
+            if check_model is not None:
+                if check_model[2] == (1 if pretrained_flag else 0):
+                    print(
+                        f"Model {model_name} with {pretrained_name}  already exists in the database. Skipping download and save.")
+                    continue
 
-            print(f"Model {model_name} does not exist in the database. Processing...")
-
+            print(
+                f"Model {model_name} with {pretrained_name} does not exist in the database. Processing...")
             try:
                 # Load the pretrained model
                 model = model_loader.get_pretrained_model(model_name, pretrained=pretrained_flag)
@@ -53,7 +55,8 @@ def initialize_models_in_db():
                 model_loaded = BaseModel(model_name, model_filepath, pretrained_flag_db)
                 model_da.save_model_to_db(model_loaded)
 
-                print(f"The {model_name} information has been saved to the database.")
+                print(
+                    f"The {model_name} with {pretrained_name} information has been saved to the database.")
 
             except Exception as e:
                 print(f"An error occurred while processing {model_name}: {str(e)}")

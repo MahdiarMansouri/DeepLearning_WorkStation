@@ -70,33 +70,24 @@ class ModelDA:
         self.cursor.execute("select * from model_storage where id=%s", [id])
         model = self.cursor.fetchone()
         self.disconnect()
-        model = BaseModel(model.model_name, model.architecture, model.weights)
+        model = BaseModel(model.model_name, model.model_path, model.pretrained)
         return model
 
-    def find_by_model_name(self, name):
+    def find_by_model_name(self, model_name):
         self.connect()
-        self.cursor.execute("select model_name, model_path, pretrained from model_storage where model_name= %s", [name])
+        self.cursor.execute("select model_name, model_path, pretrained from model_storage where model_name= %s", [model_name])
+        models = self.cursor.fetchall()
+        self.disconnect()
+        return models
+
+    def find_by_model_name_pretrained(self, model_name, pretrained):
+        self.connect()
+        self.cursor.execute("select model_name, model_path, pretrained from model_storage where model_name= %s and pretrained=%s", [model_name, pretrained])
         model = self.cursor.fetchone()
         self.disconnect()
-        if model is not None:
-            model_name, model_path, pretrained_flag = model
-            # Return pretrained_flag value from 0 & 1 to boolean for actual pretrained value
-            pretrained = bool(pretrained_flag)
+        return model
 
-            return BaseModel(model_name, model_path, pretrained)
-        else:
-            return None
 
-    def load_model_from_db(self, model_name):
-        self.connect()
-        self.cursor.execute("SELECT * FROM model_storage WHERE model_name = %s", (model_name,))
-        row = self.cursor.fetchone()
-        self.disconnect()
-
-        if row:
-            architecture_blob, weights_blob = row
-            model = pickle.loads(architecture_blob)
-            model.load_state_dict(pickle.loads(weights_blob))
-            return model
-        else:
-            raise ValueError(f"Model with name {model_name} not found in database.")
+# model_da = ModelDA()
+# model = model_da.find_by_model_name('alexnet')
+# print(model)

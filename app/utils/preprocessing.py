@@ -6,7 +6,7 @@ import numpy as np
 from skimage.filters import sobel, gabor
 from skimage import morphology
 
-# todo: Add PCA for preprocessing
+#todo: Add PCA for preprocessing
 
 class FeatureExtractionDataset(Dataset):
     def __init__(self, dataset, feature_method='sobel'):
@@ -73,5 +73,5 @@ class FeatureExtractionDataset(Dataset):
             labels.append(label)
 
         # Return a new dataset of features
-        return torch.stack(feature_images), torch.tensor(labels)
+        return Dataset(torch.stack(feature_images), torch.tensor(labels))
 
