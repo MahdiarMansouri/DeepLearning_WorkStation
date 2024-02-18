@@ -14,7 +14,7 @@ class PretrainedModelLoader:
             'efficientnet': models.efficientnet_b0,
             'efficientnetv2': models.efficientnet_v2_s,
             'googlenet': models.googlenet,
-            'inceptionv3': models.inception_v3,
+            # 'inceptionv3': models.inception_v3,
             'maxvit': models.maxvit_t,
             'mnasnet': models.mnasnet1_0,
             'mobilenetv2': models.mobilenet_v2,
@@ -23,10 +23,10 @@ class PretrainedModelLoader:
             'resnet': models.resnet50,
             'resnext': models.resnext50_32x4d,
             'shufflenetv2': models.shufflenet_v2_x1_0,
-            'squeezenet': models.squeezenet1_0,
+            # 'squeezenet': models.squeezenet1_0,
             'swintransformer': models.swin_t,
             'vgg': models.vgg16,
-            'visiontransformer': models.vit_b_16,
+            # 'visiontransformer': models.vit_b_16,
             'wideresnet': models.wide_resnet50_2,
         }
 
