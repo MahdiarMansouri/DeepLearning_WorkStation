@@ -1,7 +1,7 @@
 import pickle
 import mysql.connector
 from mysql.connector import Error
-from app.models.dl_models.dl_models import BaseModel
+from app.models.dl_models.dl_models import BaseModel, Result
 
 
 class ModelDA:
@@ -46,6 +46,14 @@ class ModelDA:
                              result.learning_rate, str(result.train_acc_list), str(result.val_acc_list), str(result.train_loss_list),
                              str(result.val_loss_list)])
         self.disconnect(commit=True)
+
+    def read_result(self, id):
+        self.connect()
+        self.cursor.execute("select * from model_training_results where id = %s", [id])
+        result = self.cursor.fetchall()
+        self.disconnect()
+        # result = Result(result.model_name)
+        return result
 
     def remove_model(self, code):
         self.connect()
