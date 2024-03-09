@@ -49,8 +49,8 @@ database_name = "dlws"
 create_model_storage_table = """
 CREATE TABLE model_storage (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    model_name VARCHAR(255) NOT NULL,
-    model_path VARCHAR(255) NOT NULL, 
+    model_name VARCHAR(100) NOT NULL,
+    model_path VARCHAR(300) NOT NULL, 
     pretrained TINYINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
@@ -59,12 +59,13 @@ CREATE TABLE model_storage (
 create_model_results_table = """
 CREATE TABLE model_training_results (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    model_name VARCHAR(255),
+    model_name VARCHAR(100),
+    dataset_name VARCHAR(100),
     epoch_nums INT,
     batch_size INT,
     pretrained TINYINT,
     output_classes INT,
-    feature_method VARCHAR(255),
+    feature_method VARCHAR(100),
     optimizer VARCHAR(100),
     loss_func VARCHAR(100),
     learning_rate FLOAT,
@@ -72,6 +73,7 @@ CREATE TABLE model_training_results (
     val_acc_list TEXT,
     train_loss_list TEXT,
     val_loss_list TEXT,
+    running_time FLOAT(4, 2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
 """

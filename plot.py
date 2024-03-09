@@ -1,19 +1,32 @@
 import matplotlib.pyplot as plt
+import numpy as np
+
 from app.models.db_models.database_model import ModelDA
+from datetime import datetime
 
-model_da = ModelDA()
-result = model_da.read_result(21)
-train_acc = eval(result[0][10])
-val_acc = eval(result[0][11])
-train_loss = eval(result[0][12])
-val_loss = eval(result[0][13])
 
-# train_loss = [x if x < 1 else 0.7 for x in train_loss]
+def plot_results(id):
+    model_da = ModelDA()
+    result = model_da.read_result(id)
+    result = result[0]
+    print(result)
+    title = result[1]
+    train_acc = eval(result[11])
+    val_acc = eval(result[12])
+    train_loss = eval(result[13])
+    val_loss = eval(result[14])
 
-plt.title(result[0][1])
-plt.plot(train_acc, label='train Acc')
-plt.plot(val_acc, label='val Acc')
-plt.plot(train_loss, label='train loss')
-plt.plot(val_loss, label='val loss')
-plt.legend()
-plt.show()
+    # val_acc = [x if x > 0.6 else 0.6 for x in val_acc]
+
+    plt.title(title)
+    plt.plot(train_acc, label='train Acc')
+    plt.plot(val_acc, label='val Acc')
+    plt.plot(train_loss, label='train loss')
+    plt.plot(val_loss, label='val loss')
+    plt.legend()
+    plt.show()
+
+
+for i in range(1, 5):
+    print(i)
+    plot_results(i)

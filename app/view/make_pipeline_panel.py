@@ -57,11 +57,16 @@ class MakePipeline(tk.Frame):
         ttk.Combobox(self, textvariable=self.lr_entry, values=['0.001', '0.003', '0.01', '0.03']).grid(row=9, column=1,
                                                                                                        sticky='we')
 
+        tk.Label(self, text="Dataset Name").grid(row=10, column=0, sticky='e')
+        self.dataset_name_entry = tk.Entry(self)
+        self.dataset_name_entry.grid(row=10, column=1, sticky='we')
+
         # Right side - Pipeline table
         self.pipeline_treeview = ttk.Treeview(self, columns=(
-            'Data Path', 'Batch Size', 'Feature Method', 'Model Name', 'Pretrained', 'Epoch Numbers', 'Optimizer',
-            'Loss Function', 'Learning Rate'), show='headings')
+            'Data Path', 'Dataset Name', 'Batch Size', 'Feature Method', 'Model Name', 'Pretrained', 'Epoch Numbers',
+            'Optimizer', 'Loss Function', 'Learning Rate'), show='headings')
         self.pipeline_treeview.heading('Data Path', text='Data Path')
+        self.pipeline_treeview.heading('Dataset Name', text='Dataset Name')
         self.pipeline_treeview.heading('Batch Size', text='Batch Size')
         self.pipeline_treeview.heading('Feature Method', text='Feature Method')
         self.pipeline_treeview.heading('Model Name', text='Model Name')
@@ -78,9 +83,9 @@ class MakePipeline(tk.Frame):
         self.pipeline_treeview.configure(yscrollcommand=scrollbar.set)
 
         # Bottom buttons
-        tk.Button(self, text="Menu", command=lambda: controller.show_frame("Dashboard")).grid(row=10, column=0, pady=10)
-        tk.Button(self, text="Make Pipeline", command=self.make_pipeline).grid(row=10, column=1, pady=10)
-        tk.Button(self, text="Run Pipelines", command=self.run_pipelines).grid(row=10, column=3, pady=10)
+        tk.Button(self, text="Menu", command=lambda: controller.show_frame("Dashboard")).grid(row=11, column=0, pady=10)
+        tk.Button(self, text="Make Pipeline", command=self.make_pipeline).grid(row=11, column=1, pady=10)
+        tk.Button(self, text="Run Pipelines", command=self.run_pipelines).grid(row=11, column=3, pady=10)
 
     def browse_data_file(self):
         folder_selected = filedialog.askdirectory()
@@ -98,8 +103,11 @@ class MakePipeline(tk.Frame):
         optimizer = self.optimizer_entry.get()
         loss_func = self.loss_func_entry.get()
         lr = self.lr_entry.get()
+        dataset_name = self.dataset_name_entry.get()
 
-        values = [data_path, batch_size, feature_method, model_name, pretrained, epoch_nums, optimizer, loss_func, lr]
+        values = [data_path, dataset_name, batch_size, feature_method, model_name, pretrained, epoch_nums, optimizer,
+                  loss_func, lr]
+
         self.pipeline_treeview.insert('', tk.END, values=values)
 
         match lr:
@@ -117,7 +125,7 @@ class MakePipeline(tk.Frame):
 
         self.controller.pipelines_values.append(values)
         self.controller.pipelines.append(
-            PipelineRunner(data_path, int(batch_size), feature_method, model_name, int(pretrained),
+            PipelineRunner(data_path, dataset_name, int(batch_size), feature_method, model_name, int(pretrained),
                            int(epoch_nums), optimizer, float(lr), loss_func)
         )
 

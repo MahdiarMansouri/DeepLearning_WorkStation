@@ -39,12 +39,12 @@ class ModelDA:
         self.connect()
         self.cursor.execute("insert into model_training_results (model_name, epoch_nums, batch_size, pretrained,"
                             " output_classes, feature_method, optimizer, loss_func, learning_rate, train_acc_list,"
-                            " val_acc_list, train_loss_list, val_loss_list)"
-                            " values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                            " val_acc_list, train_loss_list, val_loss_list, running_time)"
+                            " values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                             [result.model_name, result.epoch_nums, result.batch_size, result.pretrained,
                              result.output_classes, result.feature_method, result.optimizer, result.loss_function,
                              result.learning_rate, str(result.train_acc_list), str(result.val_acc_list), str(result.train_loss_list),
-                             str(result.val_loss_list)])
+                             str(result.val_loss_list), result.running_time])
         self.disconnect(commit=True)
 
     def read_result(self, id):

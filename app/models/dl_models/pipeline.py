@@ -4,12 +4,14 @@ from app.services.training_service import Trainer
 from app.utils.dataset import DataPreparation, TensorDataset
 from app.utils.preprocessing import FeatureExtractionDataset
 import torch
+from datetime import datetime
 
 
 class PipelineRunner:
-    def __init__(self, data_path, batch_size, feature_method, model_name, pretrained, epoch_nums, optimizer,
+    def __init__(self, data_path, dataset_name, batch_size, feature_method, model_name, pretrained, epoch_nums, optimizer,
                  learning_rate, loss_func):
         self.data_path = data_path
+        self.dataset_name = dataset_name
         self.batch_size = batch_size
         self.feature_method = feature_method
         self.model_name = model_name
@@ -56,12 +58,15 @@ class PipelineRunner:
         self.model, self.loss_lists, self.acc_lists = trainer.train_model()
 
     def run(self):
+        s0 = datetime.now()
         self.data_preparation()
         self.define_model()
         self.train_model()
+        delta_time = datetime.now() - s0
+        self.running_time = delta_time.seconds / 60
 
     def get_results(self):
-        result = Result(self.model_name, self.epoch_nums, self.batch_size, self.pretrained, self.output_classes,
+        result = Result(self.model_name, self.dataset_name, self.epoch_nums, self.batch_size, self.pretrained, self.output_classes,
                         self.feature_method, self.optimizer, self.loss_func, self.learning_rate, self.acc_lists.train,
-                        self.acc_lists.val, self.loss_lists.train, self.loss_lists.val)
+                        self.acc_lists.val, self.loss_lists.train, self.loss_lists.val, self.running_time)
         return result

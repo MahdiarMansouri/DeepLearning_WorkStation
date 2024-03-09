@@ -71,9 +71,10 @@ class BaseModel:
 
 
 class Result:
-    def __init__(self, model_name, epoch_nums, batch_size, pretrained, output_classes, feature_method, optimizer,
-                 loss_function, learning_rate, train_acc_list, val_acc_list, train_loss_list, val_loss_list):
+    def __init__(self, model_name, dataset_name, epoch_nums, batch_size, pretrained, output_classes, feature_method, optimizer,
+                 loss_function, learning_rate, train_acc_list, val_acc_list, train_loss_list, val_loss_list, running_time):
         self.model_name = model_name
+        self.dataset_name = dataset_name
         self.epoch_nums = epoch_nums
         self.batch_size = batch_size
         self.pretrained = pretrained
@@ -86,6 +87,7 @@ class Result:
         self.val_acc_list = val_acc_list
         self.train_loss_list = train_loss_list
         self.val_loss_list = val_loss_list
+        self.running_time = running_time
 
     def __repr__(self):
         return json.dumps(self.__dict__)
