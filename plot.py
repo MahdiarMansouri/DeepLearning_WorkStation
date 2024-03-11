@@ -26,7 +26,8 @@ def plot_results(id):
     plt.legend()
     plt.show()
 
+plot_results(18)
 
-for i in range(1, 5):
-    print(i)
-    plot_results(i)
+# for i in range(5, 9):
+#     print(i)
+#     plot_results(i)

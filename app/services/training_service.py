@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import torch
 from easydict import EasyDict
 from torch import nn, optim
@@ -15,6 +17,7 @@ class Trainer:
         self.device = device
 
     def train_model(self):
+
         self.model.to(self.device)
 
         if self.criterion == 'CrossEntropy':
@@ -27,6 +30,7 @@ class Trainer:
         loss_lists = EasyDict({'train': [], 'val': []})
 
         for epoch in range(self.epochs):
+            s0 = datetime.now()
             self.model.train()
             running_loss = 0.0
             correct_predictions = 0
@@ -56,10 +60,11 @@ class Trainer:
                 val_loss, val_acc = self.evaluate_model()
                 loss_lists.val.append(val_loss)
                 acc_lists.val.append(val_acc)
+                epoch_timing = datetime.now() - s0
                 print(
-                    f'Epoch {epoch + 1}, Train Loss: {train_loss}, Train Acc: {train_accuracy}, Val Loss: {val_loss}, Val Acc: {val_acc}')
+                    f'Epoch {epoch + 1} => Train Loss: {train_loss:.4f} | Train Acc: {train_accuracy:.4f} | Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f} | time: {epoch_timing.seconds:.2f}')
             else:
-                print(f'Epoch {epoch + 1}, Train Loss: {train_loss}, Train Acc: {train_accuracy}')
+                print(f'Epoch {epoch + 1} => Train Loss: {train_loss:.3f}, Train Acc: {train_accuracy:.3f}')
 
         return self.model, loss_lists, acc_lists
 
